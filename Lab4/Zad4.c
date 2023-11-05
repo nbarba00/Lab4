@@ -142,4 +142,50 @@ int printPoly(char* polynomeName, Position first) {
 			}
 		}
 	}
+	
+int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
+
+
+
+
+		Position currentPoly1 = firstElementPoly1;
+		Position currentPoly2 = firstElementPoly2;
+		Position currentResult = resultHead;
+		Position remainingPoly = NULL;
+
+		//untill the end of one(or both)polynomes
+		while (currentPoly1 != NULL && currentPoly2 != NULL) {
+			if (currentPoly1->exponent == currentPoly2->exponent) {
+				createAndInsertAfter(currentPoly1->coefficient + currentPoly2->coefficient, currentPoly1->exponent);
+				currentPoly1 = currentPoly1->next;
+				currentPoly2 = currentPoly2->next;
+				currentResult = currentResult->next;
+			}
+			else if (currentPoly1->exponent < currentPoly2->exponent) {
+				createAndInsertAfter(currentPoly1->coefficient, currentPoly1->exponent, currentResult);
+				currentPoly1 = currentPoly1->next;
+				currentResult = currentResult->next;
+			}
+			else {//if(currentPoly1->exponent>currentPoly2->exponent)
+				createAndInsertAfter(currentPoly2->coefficient, currentPoly2->exponent, currentResult);
+				currentPoly2 = currentPoly2->next;
+				currentResult = currentResult->next;
+			}
+
+		}
+		if (currentPoly1 == NULL) {
+			remainingPoly = currentPoly2;
+		}
+		else {
+			remainingPoly = currentPoly1;
+		}
+		//finish with the rest of the remainingPoly
+		while (remainingPoly != NULL) {
+			createAndInsertAfter(remainingPoly->coefficient, remainingPoly->exponent, currentResult);
+			remainingPoly = remainingPoly->next;
+			currentResult = currentResult->next;
+		}
+
+		return EXIT_SUCCESS;
+}
 }
