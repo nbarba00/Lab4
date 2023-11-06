@@ -144,10 +144,6 @@ int printPoly(char* polynomeName, Position first) {
 	}
 	
 int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
-
-
-
-
 		Position currentPoly1 = firstElementPoly1;
 		Position currentPoly2 = firstElementPoly2;
 		Position currentResult = resultHead;
