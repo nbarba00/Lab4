@@ -188,4 +188,19 @@ int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
 
 		return EXIT_SUCCESS;
 }
+	Position createElement(int coefficient, int exponent) {
+	Position element = NULL;
+
+	element = (Position)malloc(sizeof(Element));
+	if (!element) {
+		printf("Cant allocate memory!\n");
+		return FAILED_MEMORY_ALLOCATION;
+	}
+
+	element->coefficient = coefficient;
+	element->exponent = exponent;
+	element->next = NULL;
+
+	return element;
+}
 }
