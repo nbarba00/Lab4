@@ -18,9 +18,9 @@ typedef struct _Element {
 
 int readFile(Position headPoly1, Position headPoly2, char* fileName);
 int printPoly(char* polynomeName, Position first);
-int addPoly1(Position resultHead, Position headPoly1, Position headPoly2);
-//int addPoly2(Position resultHead, Position headPoly1, Position headPoly2);
-int multiplyPoly(Position resultHead, Position headPoly1, Position headPoly2);
+int addPoly1(Position resultHead, Position firstElementPoly1, Position firstElementPoly2);
+int addPoly2(Position resultHead, Position firstElementPoly1, Position firstElementPoly2);
+int multiplyPoly(Position resultHead, Position firstElementPoly1, Position firstElementPoly2);
 int freeMemory(Position head);
 int parseStringIntoList(Position head, char* buffer);
 Position createElement(int coefficient, int exponent);
@@ -92,10 +92,9 @@ int readFile(Position headPoly1, Position headPoly2, char* fileName) {
 	return EXIT_SUCCESS;
 }
 
+
 int printPoly(char* polynomeName, Position first) {
 	printf("%s=", polynomeName);
-	Position current = NULL;
-	current = first->next;
 	if (first) {
 		if (first->exponent < 0) {
 			if (first->coefficient == 1) {
@@ -113,37 +112,44 @@ int printPoly(char* polynomeName, Position first) {
 				printf("%dx^(%d)", first->coefficient, first->exponent);
 			}
 		}
+
+		first = first->exponent;
 	}
+
 	for (; current != NULL; current = current->next) {
 		if (current->coefficient < 0) {
 			if (first->exponent < 0) {
 				printf(" - %dx^(%d)", abs(first->coefficient), first->exponent);
 			}
 			else {
-				printf("-%dx^%d", abs(current->coefficient), current->exponent);
+				printf("-%dx^%d", abs(first->coefficient), first->exponent);
 			}
 		}
 		else {
 			if (first->exponent < 0) {
 				if (first->coefficient == 1) {
-					printf(" + x^(%d)", current->exponent);
+					printf(" + x^(%d)", first->exponent);
 				}
 				else {
-					printf(" + %dx^(%d)", current->coefficient, current->exponent);
+					printf(" + %dx^(%d)", first->coefficient, first->exponent);
 				}
 			}
 			else {
-				if (current->exponent == 1) {
-					printf(" + x^(%d)", current->exponent);
+				if (first->coefficient == 1) {
+					printf(" + x^(%d)", firstt->exponent);
 				}
 				else {
-					printf(" + %dx^(%d)", current->coefficient, current->exponent);
+					printf(" + %dx^(%d)", first->coefficient, first->exponent);
 				}
 			}
 		}
 	}
-	
-int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
+
+	printf("\n");
+	return EXIT_SUCCESS;
+}
+
+int addPoly1(Position resultHead, Position firstElementPoly1, Position firstElementPoly2) {
 		Position currentPoly1 = firstElementPoly1;
 		Position currentPoly2 = firstElementPoly2;
 		Position currentResult = resultHead;
@@ -152,10 +158,13 @@ int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
 		//untill the end of one(or both)polynomes
 		while (currentPoly1 != NULL && currentPoly2 != NULL) {
 			if (currentPoly1->exponent == currentPoly2->exponent) {
-				createAndInsertAfter(currentPoly1->coefficient + currentPoly2->coefficient, currentPoly1->exponent);
+				if(currentPoly1->cefficient+currentPoly2->coefficient!=0) {
+					createAndInsertAfter(currentPoly1->coefficient + currentPoly2->coefficient, currentPoly1->exponent);
+					currentResult = currentResult->next;
+				}
 				currentPoly1 = currentPoly1->next;
 				currentPoly2 = currentPoly2->next;
-				currentResult = currentResult->next;
+
 			}
 			else if (currentPoly1->exponent < currentPoly2->exponent) {
 				createAndInsertAfter(currentPoly1->coefficient, currentPoly1->exponent, currentResult);
@@ -184,19 +193,49 @@ int addPoly1(Position resultHead, Position headPoly1, Position headPoly2) {
 
 		return EXIT_SUCCESS;
 }
-	Position createElement(int coefficient, int exponent) {
-	Position element = NULL;
 
-	element = (Position)malloc(sizeof(Element));
-	if (!element) {
-		printf("Cant allocate memory!\n");
-		return FAILED_MEMORY_ALLOCATION;
+int addPoly2(Position resultHead, Position headPoly1, Position headPoly2)
+{
+	Position currentPoly1 = firstElementPoly1;
+	Position currentPoly2 = firstElementPoly2;
+
+	for (; currentPoly1 != NULL; currentPoly1 = currentPoly1->next)
+	{
+		Position newElement = createElement(currentPoly1->coefficient, currentPoly1->exponent);
+		if (!newElement)
+		{
+			return EXIT_FAILURE;
+		}
+
+		insertSorted(resultHead, newElement);
 	}
+	for (; currentPoly2 != NULL; currentPoly2 = currentPoly2->next)
+	{
+		Position newElement = createElement(currentPoly2->coefficient, currentPoly2->exponent);
+		if (!newElement)
+		{
+			return EXIT_FAILURE;
+		}
 
-	element->coefficient = coefficient;
-	element->exponent = exponent;
-	element->next = NULL;
-
-	return element;
+		insertSorted(resultHead, newElement);
+	}
+	return EXIT_SUCCESS;
 }
+
+int multiplyPoly(Position resultHead, Position firstElementPoly1, Position firstElementPoly2)
+{
+	if (firstElementPoly1 == NULL || firstElementPoly2 == NULL)
+		return EMPTY_LISTS;
+	for (Position currentPoly1 = firstElementPOly1; currentPoly1 != NULL; currentPoly1 = currentPoly1->next) {
+		for (Position currentPoly2 = firstElementPOly2; currentPoly2 != NULL; currentPoly2 = currentPoly2->next) {
+			Position newElement = createElement(currentPoly1->coefficient * currentPoly2->coefficient, currentPoly1->exponent + currentPoly2->exponent);
+			if (!newElement) {
+				return EXIT_FAILURE;
+			}
+
+			insertSorted(resultHead, newElement);
+		}
+	}
+	return EXIT_SUCCESS;
+
 }
